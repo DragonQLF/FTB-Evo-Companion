@@ -164,6 +164,8 @@
     "compat.sfm.client.SfmJeiPluginMixin",
     "compat.iceandfire.client.IceAndFireSirenShaderMixin",
     "client.BlockStateModelWrapperNullModelMixin",
+    "client.CreativeModeTabsAccessor",
+    "client.CreativeSearchIndexMixin",
     "compat.justdirethings.client.JustDireThingsOreFinderMixin",
     "AutoGlowingGeoLayerAccessor",
     "PowerArmorJeiRecipesMixin",

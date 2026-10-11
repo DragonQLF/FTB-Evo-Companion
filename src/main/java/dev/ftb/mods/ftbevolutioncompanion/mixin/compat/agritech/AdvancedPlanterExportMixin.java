@@ -18,7 +18,7 @@ public abstract class AdvancedPlanterExportMixin {
     @Inject(method = "tick", at = @At("HEAD"))
     private static void ftbevo$exportWhileFull(
             Level level, BlockPos pos, BlockState state, AdvancedPlanterBlockEntity be, CallbackInfo ci) {
-        if (!level.isClientSide() && (level.getGameTime() + pos.asLong()) % 20 == 0) {
+        if (!level.isClientSide() && be.inventory.size() >= 17 && (level.getGameTime() + pos.asLong()) % 20 == 0) {
             tryOutputItemsBelow(level, pos, be);
         }
     }

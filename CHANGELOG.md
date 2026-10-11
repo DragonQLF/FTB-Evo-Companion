@@ -1,5 +1,13 @@
 # Changelog
 
+## [26.1.2.16]
+
+### Fixed
+
+- Creative inventory search showing no results on servers when another mod (FTB Quests, Inventory Essentials, FTB Library) built the creative tabs before the creative screen was opened
+- Structure-placed boss invaders rolling their gear with the server thread's random from worldgen threads, which could fail structure placement and always did with C2ME (FTBTeam/FTB-Modpack-Issues#13558)
+- Servers crash-looping on an Agritech planter whose saved inventory has fewer slots than the planter declares; the export-while-full check now skips those planters (FTBTeam/FTB-Modpack-Issues#13557)
+
 ## [26.1.2.15]
 
 ### Added

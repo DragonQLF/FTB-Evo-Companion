@@ -59,8 +59,8 @@ public final class BossInvaderHandler {
         mob.getPersistentData().putBoolean(CHECKED_KEY, true);
         Player player = level.getNearestPlayer(mob.getX(), mob.getY(), mob.getZ(), PLAYER_RANGE, false);
         GenContext ctx = player != null
-                ? GenContext.forPlayerAtPos(level.getRandom(), player, mob.blockPosition())
-                : GenContext.standalone(level.getRandom(), WorldTier.HAVEN, 0.0F, level, mob.blockPosition());
+                ? GenContext.forPlayerAtPos(mob.getRandom(), player, mob.blockPosition())
+                : GenContext.standalone(mob.getRandom(), WorldTier.HAVEN, 0.0F, level, mob.blockPosition());
         Set<LootRarity> rarities = invader.stats().keySet();
         LootRarity rarity = rarities.size() == 1 ? rarities.iterator().next() : LootRarity.random(ctx, rarities);
         if (rarity == null) {
