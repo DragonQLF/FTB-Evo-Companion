@@ -1,19 +1,25 @@
 package dev.ftb.mods.ftbevolutioncompanion.compat.hats;
 
+import com.astryxion.hats.common.capability.HatDataAccess;
 import com.astryxion.hats.common.capability.HatDataCapability;
-import com.astryxion.hats.common.hat.PlayerHatData;
+import com.astryxion.hats.common.data.ServerHatUnlocks;
+import com.astryxion.hats.common.hat.HatAdvancements;
 import com.astryxion.hats.common.network.HatPacketHandler;
+import com.astryxion.hats.common.network.PacketHatUnlocked;
+import com.astryxion.hats.common.network.PacketSetUnlockedHats;
+import com.astryxion.hats.common.network.PacketSyncHat;
 import com.astryxion.hats.common.registry.HatItemRegistry;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.List;
-import net.minecraft.advancements.AdvancementHolder;
+import java.util.Set;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +32,6 @@ import org.jspecify.annotations.Nullable;
 public final class GiveHatCommand {
     private static final String LANG = "ftbevolutioncompanion.givehat.";
     private static final String HATS = "hats";
-    private static final int[] MILESTONES = {1, 10, 100, 200, 300, 332};
 
     private GiveHatCommand() {}
 
@@ -71,9 +76,9 @@ public final class GiveHatCommand {
     private static int giveRandom(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         int unlocked = 0;
         for (ServerPlayer player : EntityArgument.getPlayers(context, "targets")) {
-            PlayerHatData data = HatDataCapability.get(player).orElse(null);
+            Set<Identifier> owned = ServerHatUnlocks.get(player).copy(player);
             List<Item> locked = HatItemRegistry.getAllHats().stream()
-                    .filter(item -> data != null && !data.hasHat(BuiltInRegistries.ITEM.getKey(item)))
+                    .filter(item -> !owned.contains(BuiltInRegistries.ITEM.getKey(item)))
                     .toList();
             if (locked.isEmpty()) {
                 context.getSource().sendFailure(Component.translatable(LANG + "all_unlocked", player.getDisplayName()));
@@ -93,27 +98,16 @@ public final class GiveHatCommand {
 
     private static boolean unlock(ServerPlayer player, Item hat) {
         Identifier id = BuiltInRegistries.ITEM.getKey(hat);
-        PlayerHatData data = HatDataCapability.get(player).orElse(null);
-        if (data == null || data.hasHat(id)) return false;
-        data.unlockHat(id);
-        awardMilestones(player, data.getUnlockedHats().size());
-        HatPacketHandler.sendHatUnlockedToPlayer(player, new ItemStack(hat));
-        HatPacketHandler.sendSyncHatToPlayer(player, data.serializeNBT());
-        HatDataCapability.markDirty(player);
+        ServerHatUnlocks store = ServerHatUnlocks.get(player);
+        if (store.copy(player).contains(id) || !store.add(player, id)) return false;
+        PacketSetUnlockedHats.send(player);
+        HatAdvancements.onUnlockCounts(player, id);
+        CompoundTag unlocked = player.getData(HatDataCapability.HAT_DATA).serializeNBT();
+        HatDataAccess.apply(player, unlocked);
+        HatPacketHandler.sendToPlayer(player, new PacketHatUnlocked(new ItemStack(hat)));
+        HatPacketHandler.sendToPlayer(player, new PacketSyncHat(unlocked));
+        player.getInventory().setChanged();
         return true;
-    }
-
-    private static void awardMilestones(ServerPlayer player, int unlocked) {
-        for (int milestone : MILESTONES) {
-            if (unlocked < milestone) return;
-            AdvancementHolder holder = player.level()
-                    .getServer()
-                    .getAdvancements()
-                    .get(Identifier.fromNamespaceAndPath(HATS, "hats/collect_" + milestone));
-            if (holder != null) {
-                player.getAdvancements().award(holder, "unlock_via_code");
-            }
-        }
     }
 
     @Nullable

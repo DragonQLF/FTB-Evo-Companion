@@ -160,7 +160,6 @@
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",
-    "compat.hats.client.HatClientPacketsMixin",
     "compat.otherworld.client.OccultismJeiPluginMixin",
     "compat.sfm.client.SfmJeiPluginMixin",
     "compat.iceandfire.client.IceAndFireSirenShaderMixin",
