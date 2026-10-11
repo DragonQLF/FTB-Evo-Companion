@@ -38,6 +38,7 @@
     "compat.hostilenetworks.SimChamberMenuModeLockMixin",
     "compat.hostilenetworks.SimChamberTrainingOnlyMixin",
     "compat.puffish.PuffishDealDamageRemainderMixin",
+    "compat.puffish.PuffishIncreaseStatRemainderMixin",
     "compat.hephaestus.HephaestusHarvestTierMixin",
     "compat.hephaestus.HephaestusToolHarvestMixin",
     "compat.hephaestus.HephaestusToolRecalculateMixin",

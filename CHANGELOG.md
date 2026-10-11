@@ -7,6 +7,7 @@
 - Creative inventory search showing no results on servers when another mod (FTB Quests, Inventory Essentials, FTB Library) built the creative tabs before the creative screen was opened
 - Structure-placed boss invaders rolling their gear with the server thread's random from worldgen threads, which could fail structure placement and always did with C2ME (FTBTeam/FTB-Modpack-Issues#13558)
 - Servers crash-looping on an Agritech planter whose saved inventory has fewer slots than the planter declares; the export-while-full check now skips those planters (FTBTeam/FTB-Modpack-Issues#13557)
+- Skill XP from stats worth less than half a point per award, such as swimming, rounding to nothing; those fractions now add up, and stats worth half a point or more pay what they did before
 
 ## [26.1.2.15]
 

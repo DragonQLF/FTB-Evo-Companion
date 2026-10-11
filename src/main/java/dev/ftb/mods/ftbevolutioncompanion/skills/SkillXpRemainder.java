@@ -11,22 +11,32 @@ import net.minecraft.world.entity.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DamageXpRemainder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DamageXpRemainder.class);
+public final class SkillXpRemainder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SkillXpRemainder.class);
     private static final String CALCULATION = "net.puffish.skillsmod.api.calculation.Calculation";
+    private static final double ROUNDS_TO_ZERO = 0.5;
 
     private static volatile boolean failureLogged;
 
-    private DamageXpRemainder() {}
+    private SkillXpRemainder() {}
 
-    public static Object wrap(Object calculation) {
+    public static Object carryAll(Object calculation) {
+        return wrap(calculation, false);
+    }
+
+    public static Object carryRoundedAway(Object calculation) {
+        return wrap(calculation, true);
+    }
+
+    private static Object wrap(Object calculation, boolean roundedAwayOnly) {
         if (calculation == null || Proxy.isProxyClass(calculation.getClass())) {
             return calculation;
         }
         try {
             Class<?> type =
                     Class.forName(CALCULATION, false, calculation.getClass().getClassLoader());
-            return Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] {type}, new Carry(calculation));
+            return Proxy.newProxyInstance(
+                    type.getClassLoader(), new Class<?>[] {type}, new Carry(calculation, roundedAwayOnly));
         } catch (ReflectiveOperationException | RuntimeException e) {
             logFailure(e);
             return calculation;
@@ -36,17 +46,19 @@ public final class DamageXpRemainder {
     private static void logFailure(Exception e) {
         if (!failureLogged) {
             failureLogged = true;
-            LOGGER.warn("Could not carry damage XP fractions", e);
+            LOGGER.warn("Could not carry skill XP fractions", e);
         }
     }
 
     private static final class Carry implements InvocationHandler {
         private final Object delegate;
+        private final boolean roundedAwayOnly;
         private final Map<UUID, Double> remainders = new ConcurrentHashMap<>();
         private volatile Method playerAccessor;
 
-        private Carry(Object delegate) {
+        private Carry(Object delegate, boolean roundedAwayOnly) {
             this.delegate = delegate;
+            this.roundedAwayOnly = roundedAwayOnly;
         }
 
         @Override
@@ -55,7 +67,7 @@ public final class DamageXpRemainder {
                 return switch (method.getName()) {
                     case "equals" -> proxy == args[0];
                     case "hashCode" -> System.identityHashCode(proxy);
-                    case "toString" -> "DamageXpRemainder[" + delegate + "]";
+                    case "toString" -> "SkillXpRemainder[" + delegate + "]";
                     default -> call(method, args);
                 };
             }
@@ -64,6 +76,9 @@ public final class DamageXpRemainder {
                 return result;
             }
             if (!(result instanceof Double value) || !(value > 0.0) || value.isInfinite()) {
+                return result;
+            }
+            if (roundedAwayOnly && value >= ROUNDS_TO_ZERO) {
                 return result;
             }
             UUID player = player(args[0]);
