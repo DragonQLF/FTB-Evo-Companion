@@ -171,6 +171,7 @@ dependencies {
 	compileOnly "curse.maven:roots-classic-295780:${roots_classic_curse_file_id}"
 	compileOnly "curse.maven:witchery-1125946:${witchery_curse_file_id}"
 	compileOnly "curse.maven:witchery-forbidden-magic-1644651:${witchery_forbidden_magic_curse_file_id}"
+	compileOnly "curse.maven:nutritional-1579319:${nutritional_curse_file_id}"
 	compileOnly "curse.maven:kotlin-for-forge-351264:${kotlinforforge_curse_file_id}"
 	compileOnly "curse.maven:anima-1706323:${anima_curse_file_id}"
 	compileOnly "curse.maven:irons-artifice-1650193:${irons_artifice_curse_file_id}"

@@ -27,6 +27,7 @@ import dev.ftb.mods.ftbevolutioncompanion.compat.hephaestus.ToolTraits;
 import dev.ftb.mods.ftbevolutioncompanion.compat.iceandfire.IceAndFireClaimProtection;
 import dev.ftb.mods.ftbevolutioncompanion.compat.iris.IrisGeckoGlow;
 import dev.ftb.mods.ftbevolutioncompanion.compat.jei.RecipeSyncTypes;
+import dev.ftb.mods.ftbevolutioncompanion.compat.nutritional.VampireNutritionLock;
 import dev.ftb.mods.ftbevolutioncompanion.compat.oceanmobs.RiftArena;
 import dev.ftb.mods.ftbevolutioncompanion.compat.powerarmor.PowerArmorRecipeSync;
 import dev.ftb.mods.ftbevolutioncompanion.compat.removed.RemovedMods;
@@ -101,6 +102,7 @@ public class FTBEvolutionCompanion {
         NeoForge.EVENT_BUS.addListener(ChallengeLeaderboard::onServerStopped);
         NeoForge.EVENT_BUS.addListener(ChallengeBoardCommand::onRegisterCommands);
         NeoForge.EVENT_BUS.addListener(GiveHatCommand::onRegisterCommands);
+        NeoForge.EVENT_BUS.addListener(VampireNutritionLock::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(EventPriority.LOW, BossInvaderHandler::onFinalizeSpawn);
         NeoForge.EVENT_BUS.addListener(BossInvaderHandler::onEntityJoinLevel);
         NeoForge.EVENT_BUS.addListener(RiftArena::onSpawnPlacementCheck);

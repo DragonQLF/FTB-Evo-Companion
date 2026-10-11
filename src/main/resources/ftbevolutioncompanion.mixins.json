@@ -35,6 +35,7 @@
     "MobFlowPadMotionSyncMixin",
     "compat.ae2.MeteoriteNetherLakeMixin",
     "compat.colossalreactors.ColossalReactorsFluidTransactionMixin",
+    "compat.colossalreactors.ColossalReactorsTurbinePortQuickMoveMixin",
     "compat.hostilenetworks.SimChamberMenuModeLockMixin",
     "compat.hostilenetworks.SimChamberTrainingOnlyMixin",
     "compat.puffish.PuffishDealDamageRemainderMixin",

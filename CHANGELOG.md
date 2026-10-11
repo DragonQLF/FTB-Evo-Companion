@@ -8,6 +8,8 @@
 - Structure-placed boss invaders rolling their gear with the server thread's random from worldgen threads, which could fail structure placement and always did with C2ME (FTBTeam/FTB-Modpack-Issues#13558)
 - Servers crash-looping on an Agritech planter whose saved inventory has fewer slots than the planter declares; the export-while-full check now skips those planters (FTBTeam/FTB-Modpack-Issues#13557)
 - Skill XP from stats worth less than half a point per award, such as swimming, rounding to nothing; those fractions now add up, and stats worth half a point or more pay what they did before
+- Shift-clicking an item in a Colossal Reactors Turbine Resource Port screen duplicating it up to a full stack; shift-click now does nothing there, since the port has no item slot (FTBTeam/FTB-Modpack-Issues#13573)
+- Nutritional nutrients decaying and changing for Witchery vampires, who cannot eat normal food; a vampire's nutrients now stay at 50% (FTBTeam/FTB-Modpack-Issues#13549)
 - `/givehat` working with Hats 3.0.0; it now unlocks through Hats' own unlock store, so the toast, sync and collection advancements match a normal unlock
 
 ### Removed
