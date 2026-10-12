@@ -1,8 +1,12 @@
 package dev.ftb.mods.ftbevolutioncompanion.fabricator;
 
+import com.mojang.serialization.Codec;
 import dev.ftb.mods.ftbevolutioncompanion.FTBEvolutionCompanion;
+import java.util.List;
 import java.util.Set;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -18,6 +22,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -34,6 +39,8 @@ public final class FabricatorRegistry {
             DeferredRegister.create(Registries.RECIPE_TYPE, MOD_ID);
     private static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID);
+    private static final DeferredRegister.DataComponents COMPONENTS =
+            DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MOD_ID);
 
     public static final DeferredBlock<FabricatorBlock> BLOCK = BLOCKS.registerBlock(
             "ftb_fabricator",
@@ -66,6 +73,16 @@ public final class FabricatorRegistry {
             SERIALIZERS.register(
                     "fabricating", () -> new RecipeSerializer<>(FabricatorRecipe.CODEC, FabricatorRecipe.STREAM_CODEC));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<SimpleFluidContent>>> FLUIDS =
+            COMPONENTS.registerComponentType(
+                    "fabricator_fluids",
+                    builder -> builder.persistent(SimpleFluidContent.CODEC.listOf())
+                            .networkSynchronized(SimpleFluidContent.STREAM_CODEC.apply(ByteBufCodecs.list())));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ENERGY =
+            COMPONENTS.registerComponentType(
+                    "fabricator_energy",
+                    builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     private FabricatorRegistry() {}
 
     public static void register(IEventBus bus) {
@@ -75,6 +92,7 @@ public final class FabricatorRegistry {
         MENUS.register(bus);
         TYPES.register(bus);
         SERIALIZERS.register(bus);
+        COMPONENTS.register(bus);
         bus.addListener(FabricatorRegistry::capabilities);
         bus.addListener(FabricatorRegistry::creativeTab);
         bus.addListener(FabricatorPayloads::register);

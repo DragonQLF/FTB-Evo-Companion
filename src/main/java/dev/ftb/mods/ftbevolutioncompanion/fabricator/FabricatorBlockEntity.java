@@ -17,6 +17,10 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -25,12 +29,12 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -39,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.transfer.DelegatingResourceHandler;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
@@ -385,11 +390,50 @@ public final class FabricatorBlockEntity extends BlockEntity implements MenuProv
     }
 
     @Override
-    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
-        if (level instanceof ServerLevel server) {
-            for (ItemStack stack : items.copyToList())
-                Containers.dropItemStack(server, pos.getX(), pos.getY(), pos.getZ(), stack);
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {}
+
+    public boolean hasContents() {
+        return items.copyToList().stream().anyMatch(stack -> !stack.isEmpty())
+                || fluids.copyToList().stream().anyMatch(stack -> !stack.isEmpty())
+                || energy.getAmountAsInt() > 0;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentGetter components) {
+        super.applyImplicitComponents(components);
+        NonNullList<ItemStack> stacks = NonNullList.withSize(INPUTS + OUTPUTS, ItemStack.EMPTY);
+        components
+                .getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY)
+                .copyInto(stacks);
+        for (int i = 0; i < stacks.size(); i++)
+            items.set(i, ItemResource.of(stacks.get(i)), stacks.get(i).getCount());
+        List<SimpleFluidContent> tanks = components.getOrDefault(FabricatorRegistry.FLUIDS.get(), List.of());
+        for (int i = 0; i < Math.min(tanks.size(), fluids.size()); i++) {
+            FluidStack stack = tanks.get(i).copy();
+            fluids.set(i, FluidResource.of(stack), stack.getAmount());
         }
+        energy.set(Math.clamp(components.getOrDefault(FabricatorRegistry.ENERGY.get(), 0), 0, ENERGY_CAPACITY));
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        NonNullList<ItemStack> stacks = items.copyToList();
+        if (stacks.stream().anyMatch(stack -> !stack.isEmpty()))
+            components.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(stacks));
+        NonNullList<FluidStack> tanks = fluids.copyToList();
+        if (tanks.stream().anyMatch(stack -> !stack.isEmpty()))
+            components.set(
+                    FabricatorRegistry.FLUIDS.get(),
+                    tanks.stream().map(SimpleFluidContent::copyOf).toList());
+        if (energy.getAmountAsInt() > 0) components.set(FabricatorRegistry.ENERGY.get(), energy.getAmountAsInt());
+    }
+
+    @Override
+    public void removeComponentsFromTag(ValueOutput output) {
+        output.discard("items");
+        output.discard("fluids");
+        output.discard("energy");
     }
 
     @Override

@@ -4,12 +4,14 @@
 
 ### Fixed
 
-- Creative inventory search showing no results on servers when another mod (FTB Quests, Inventory Essentials, FTB Library) built the creative tabs before the creative screen was opened
-- Structure-placed boss invaders rolling their gear with the server thread's random from worldgen threads, which could fail structure placement and always did with C2ME (FTBTeam/FTB-Modpack-Issues#13558)
-- Servers crash-looping on an Agritech planter whose saved inventory has fewer slots than the planter declares; the export-while-full check now skips those planters (FTBTeam/FTB-Modpack-Issues#13557)
+- Creative inventory search showing no results on servers
+- Stopped structure-placed boss invaders rolling their gear with the server thread's random from worldgen threads (FTBTeam/FTB-Modpack-Issues#13558)
+- edgecase crash (FTBTeam/FTB-Modpack-Issues#13557)
 - Skill XP from stats worth less than half a point per award, such as swimming, rounding to nothing; those fractions now add up, and stats worth half a point or more pay what they did before
-- Shift-clicking an item in a Colossal Reactors Turbine Resource Port screen duplicating it up to a full stack; shift-click now does nothing there, since the port has no item slot (FTBTeam/FTB-Modpack-Issues#13573)
+- Shift-clicking an item in a Colossal Reactors Turbine Resource Port screen duplicating it up to a full stack; (FTBTeam/FTB-Modpack-Issues#13573)
 - Nutritional nutrients decaying and changing for Witchery vampires, who cannot eat normal food; a vampire's nutrients now stay at 50% (FTBTeam/FTB-Modpack-Issues#13549)
+- Mining a Fabricator losing its stored energy and fluids; the dropped Fabricator now keeps its items, fluids and energy and puts them back when placed
+- Biomass rate fix (FTBTeam/FTB-Modpack-Issues#13575)
 - `/givehat` working with Hats 3.0.0; it now unlocks through Hats' own unlock store, so the toast, sync and collection advancements match a normal unlock
 
 ### Removed

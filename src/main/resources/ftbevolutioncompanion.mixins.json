@@ -157,6 +157,7 @@
     "compat.powerarmor.ArmorTableMarkDirtyMixin",
     "compat.agritech.PlanterExportMixin",
     "compat.agritech.AdvancedPlanterExportMixin",
+    "compat.agritech.BiomassBurnerCompactedBlockMixin",
     "compat.ironjetpacks.JetpackTierIngredientDisplayMixin"
   ],
   "client": [
