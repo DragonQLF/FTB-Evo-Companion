@@ -1,5 +1,11 @@
 # Changelog
 
+## [26.1.2.17]
+
+### Changed
+
+- Hats compat rolled back to Hats 1.2.0 for stability issues
+
 ## [26.1.2.16]
 
 ### Fixed
