@@ -117,6 +117,17 @@ public final class CompanionContent {
             properties -> new SkylineItem(SKYLINE.get(), properties),
             properties -> properties.useBlockDescriptionPrefix().stacksTo(1));
 
+    public static final DeferredBlock<Block> ADAMANTITE_TURBINE_COIL = turbineCoil("adamantite_turbine_coil");
+    public static final DeferredBlock<Block> AETERNIUM_TURBINE_COIL = turbineCoil("aeternium_turbine_coil");
+    public static final DeferredBlock<Block> AURICHALCUM_TURBINE_COIL = turbineCoil("aurichalcum_turbine_coil");
+
+    public static final DeferredItem<BlockItem> ADAMANTITE_TURBINE_COIL_ITEM =
+            FTB_ITEMS.registerSimpleBlockItem(ADAMANTITE_TURBINE_COIL);
+    public static final DeferredItem<BlockItem> AETERNIUM_TURBINE_COIL_ITEM =
+            FTB_ITEMS.registerSimpleBlockItem(AETERNIUM_TURBINE_COIL);
+    public static final DeferredItem<BlockItem> AURICHALCUM_TURBINE_COIL_ITEM =
+            FTB_ITEMS.registerSimpleBlockItem(AURICHALCUM_TURBINE_COIL);
+
     public static final DeferredItem<BeastItem> DYNAMO_MATRIX =
             beastComponent("dynamo_matrix", Rarity.UNCOMMON, "first_tier");
     public static final DeferredItem<BeastItem> TECTONIC_INGOT =
@@ -200,6 +211,18 @@ public final class CompanionContent {
                 properties -> properties.rarity(rarity));
     }
 
+    private static DeferredBlock<Block> turbineCoil(String name) {
+        return FTB_BLOCKS.registerBlock(
+                name,
+                Block::new,
+                properties -> properties
+                        .mapColor(MapColor.METAL)
+                        .instrument(NoteBlockInstrument.IRON_XYLOPHONE)
+                        .requiresCorrectToolForDrops()
+                        .strength(5.0F, 6.0F)
+                        .sound(SoundType.METAL));
+    }
+
     private static BlockBehaviour.Properties skylineProperties(BlockBehaviour.Properties properties) {
         return properties
                 .mapColor(MapColor.QUARTZ)
@@ -224,6 +247,9 @@ public final class CompanionContent {
             event.accept(CHALLENGE_BOARD_ITEM);
             event.accept(SKYLINE_ITEM);
             event.accept(BEAST_TROPHY_ITEM);
+            event.accept(ADAMANTITE_TURBINE_COIL_ITEM);
+            event.accept(AETERNIUM_TURBINE_COIL_ITEM);
+            event.accept(AURICHALCUM_TURBINE_COIL_ITEM);
         }
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(HUNTERS_MARK);

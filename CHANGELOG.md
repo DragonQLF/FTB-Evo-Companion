@@ -1,5 +1,17 @@
 # Changelog
 
+## [26.1.2.18]
+
+### Added
+
+- Adamantite, Aeternium and Aurichalcum Turbine Coil blocks for Colossal Reactors turbines
+
+### Fixed
+
+- Mining Gadgets not giving Mining skill experience
+- The LTXI drill's Vein Mine upgrade not giving Mining skill experience for the extra blocks it breaks
+- Removed starcatcher payload fix (now fixed in the mod)
+
 ## [26.1.2.17]
 
 ### Changed

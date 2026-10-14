@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "ftbevolutioncompanion:ftb_fabricator"
+    "ftbevolutioncompanion:ftb_fabricator",
+    "ftb:adamantite_turbine_coil",
+    "ftb:aeternium_turbine_coil",
+    "ftb:aurichalcum_turbine_coil"
   ]
 }

@@ -58,6 +58,7 @@
     "compat.ltxi.LTXIExtendedInputGunneryMixin",
     "compat.ltxi.LTXIServerInputGunneryMixin",
     "compat.ltxi.LTXITracePathSeekingMixin",
+    "compat.ltxi.LTXIVeinMineSkillXpMixin",
     "compat.ltxi.LTXIWeaponGunneryMixin",
     "compat.oceanmobs.RiftWeaverBossMixin",
     "compat.oceanmobs.RiftWeaverModeHeightMixin",

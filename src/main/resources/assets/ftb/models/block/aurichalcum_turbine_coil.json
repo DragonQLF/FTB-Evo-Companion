@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "ftb:block/aurichalcum_turbine_coil",
+    "end": "ftbarmory:block/aurichalcum_block"
+  }
+}
