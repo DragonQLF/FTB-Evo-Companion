@@ -13,5 +13,8 @@ public final class CompanionTags {
     public static final TagKey<EntityType<?>> DARK_DIRT_BLACKLIST =
             TagKey.create(Registries.ENTITY_TYPE, FTBEvolutionCompanion.id("dark_dirt_blacklist"));
 
+    public static final TagKey<EntityType<?>> SPIKED_PLATE_BLACKLIST =
+            TagKey.create(Registries.ENTITY_TYPE, FTBEvolutionCompanion.id("spiked_plate_blacklist"));
+
     private CompanionTags() {}
 }

@@ -136,6 +136,7 @@
     "compat.hemomancy.EvilCraftBroomSpeedMixin",
     "compat.hemomancy.EvilCraftMaceMixin",
     "compat.hemomancy.EvilCraftSpiritBindingMixin",
+    "compat.hemomancy.EvilCraftSpikedPlateBlacklistMixin",
     "compat.hemomancy.NeoVitaeRitualActivationMixin",
     "compat.hemomancy.NeoVitaeRitualUpkeepMixin",
     "compat.hemomancy.WitcheryAbilityCooldownMixin",
