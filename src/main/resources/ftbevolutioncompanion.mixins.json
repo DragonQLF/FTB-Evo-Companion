@@ -162,8 +162,7 @@
     "compat.agritech.PlanterExportMixin",
     "compat.agritech.AdvancedPlanterExportMixin",
     "compat.agritech.BiomassBurnerCompactedBlockMixin",
-    "compat.ironjetpacks.JetpackTierIngredientDisplayMixin",
-    "compat.kubejs.WorldLoaderRegistryContextMixin"
+    "compat.ironjetpacks.JetpackTierIngredientDisplayMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",

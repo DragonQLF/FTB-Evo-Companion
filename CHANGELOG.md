@@ -20,7 +20,6 @@
 - Client crash entity render edgecase
 - Crash when loading a world with FrostBear 2.0.0; igloo guardian spawns are still disabled
 - Crash on startup with GeOre 8.1.0 and Growth Accelerator Tiers; Growth Accelerator Tiers now hooks budding GeOre growth at the right spot again
-- Crash when loading a world with KubeJS 8.0.6 on NeoForge 26.1.2.110 or newer
 - EvilCraft Spiked Plates generating blood from entities in the `ftbevolutioncompanion:spiked_plate_blacklist` entity tag, such as training dummies that never die
 
 ## [26.1.2.18]

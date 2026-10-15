@@ -127,13 +127,6 @@ repositories {
 	}
 
 	maven {
-		url = "https://maven.latvian.dev/releases"
-		content {
-			includeGroup("dev.latvian.mods")
-		}
-	}
-
-	maven {
 		url = "https://cursemaven.com"
 		content {
 			includeGroup("curse.maven")
@@ -193,7 +186,6 @@ dependencies {
 	compileOnly "curse.maven:porting-dead-libs-1173919:${portingdeadlibs_curse_file_id}"
 	compileOnly "curse.maven:agritech-evolved-1287394:${agritechevolved_curse_file_id}"
 	compileOnly "curse.maven:iron-jetpacks-284497:${ironjetpacks_curse_file_id}"
-	compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejs_version}") { transitive = false }
 	compileOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 }
 
