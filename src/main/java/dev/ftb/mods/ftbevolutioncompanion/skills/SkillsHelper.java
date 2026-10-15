@@ -7,18 +7,25 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.phys.Vec3;
 
 public final class SkillsHelper {
     public static final TagKey<Item> SCYTHES =
             TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SkillsRegistry.NAMESPACE, "scythes"));
+    public static final TagKey<Item> THROWN_WEAPONS =
+            TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(SkillsRegistry.NAMESPACE, "thrown_weapons"));
+    public static final TagKey<EntityType<?>> THROWN_PROJECTILES = TagKey.create(
+            Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(SkillsRegistry.NAMESPACE, "thrown_projectiles"));
 
     private SkillsHelper() {}
 
@@ -40,6 +47,15 @@ public final class SkillsHelper {
 
     public static boolean isSpear(ItemStack stack) {
         return stack.is(ItemTags.SPEARS);
+    }
+
+    public static boolean isThrownWeapon(ItemStack stack) {
+        return stack.is(THROWN_WEAPONS) || stack.getItem() instanceof TridentItem;
+    }
+
+    public static boolean isThrownProjectile(Entity entity) {
+        return entity != null
+                && (entity.getType().builtInRegistryHolder().is(THROWN_PROJECTILES) || entity instanceof ThrownTrident);
     }
 
     public static boolean isScythe(ItemStack stack) {
@@ -79,6 +95,9 @@ public final class SkillsHelper {
     }
 
     public static Holder<Attribute> durabilityAttribute(ItemStack stack) {
+        if (isThrownWeapon(stack)) {
+            return SkillsRegistry.THROWN_DURABILITY;
+        }
         if (isScythe(stack)) {
             return SkillsRegistry.SCYTHE_DURABILITY;
         }

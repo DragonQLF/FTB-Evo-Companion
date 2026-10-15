@@ -25,6 +25,7 @@ public record SkillCooldowns(Map<String, Long> readyAt) {
     public static final String RIPOSTE = "riposte";
     public static final String LANCER = "lancer";
     public static final String DEATHS_TOLL = "deaths_toll";
+    public static final String DOOM = "doom";
 
     public static boolean ready(ServerPlayer player, String key) {
         return remaining(player, key) <= 0;

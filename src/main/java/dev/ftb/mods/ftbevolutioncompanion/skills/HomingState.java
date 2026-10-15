@@ -7,4 +7,5 @@ public final class HomingState {
     public int retargets;
     public boolean powerShot;
     public boolean skillSpawned;
+    public boolean volleyCopy;
 }

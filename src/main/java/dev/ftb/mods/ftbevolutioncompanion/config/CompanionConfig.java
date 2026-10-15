@@ -65,6 +65,13 @@ public final class CompanionConfig {
     public static final ModConfigSpec.IntValue RIPOSTE_BUFF_WINDOW;
     public static final ModConfigSpec.IntValue RIPOSTE_COOLDOWN;
     public static final ModConfigSpec.IntValue PIN_DURATION_TICKS;
+    public static final ModConfigSpec.DoubleValue RICOCHET_RADIUS;
+    public static final ModConfigSpec.DoubleValue RICOCHET_DAMAGE_FRACTION;
+    public static final ModConfigSpec.IntValue DOOM_COOLDOWN;
+    public static final ModConfigSpec.IntValue DOOM_EFFECT_TICKS;
+    public static final ModConfigSpec.IntValue DOOM_SLOWNESS_AMPLIFIER;
+    public static final ModConfigSpec.IntValue VOLLEY_EXTRA;
+    public static final ModConfigSpec.DoubleValue VOLLEY_SPREAD_DEGREES;
     public static final ModConfigSpec.DoubleValue LANCER_LEAP_HEIGHT;
     public static final ModConfigSpec.DoubleValue LANCER_FORWARD_SPEED;
     public static final ModConfigSpec.DoubleValue LANCER_DAMAGE_SCALE;
@@ -357,6 +364,27 @@ public final class CompanionConfig {
 
         PIN_DURATION_TICKS = builder.comment("Duration in ticks of the Pinned effect applied by Pinning Strike.")
                 .defineInRange("pin_duration_ticks", 40, 1, 12000);
+
+        RICOCHET_RADIUS = builder.comment("Radius in blocks a ricocheting thrown weapon looks for its next target.")
+                .defineInRange("ricochet_radius", 8.0, 1.0, 32.0);
+
+        RICOCHET_DAMAGE_FRACTION = builder.comment(
+                        "Fraction of the thrown weapon's hit damage dealt to each ricochet target.")
+                .defineInRange("ricochet_damage_fraction", 0.5, 0.0, 10.0);
+
+        DOOM_COOLDOWN = builder.comment("Cooldown in ticks between Doom procs.")
+                .defineInRange("doom_cooldown", 200, 0, 1728000);
+
+        DOOM_EFFECT_TICKS = builder.comment("Duration in ticks of the blindness and slowness Doom applies.")
+                .defineInRange("doom_effect_ticks", 40, 1, 12000);
+
+        DOOM_SLOWNESS_AMPLIFIER = builder.comment("Slowness amplifier Doom applies (3 is Slowness IV).")
+                .defineInRange("doom_slowness_amplifier", 3, 0, 9);
+
+        VOLLEY_EXTRA = builder.comment("Extra copies thrown when Volley procs.").defineInRange("volley_extra", 2, 1, 8);
+
+        VOLLEY_SPREAD_DEGREES = builder.comment("Angle in degrees between the copies thrown by Volley.")
+                .defineInRange("volley_spread_degrees", 10.0, 1.0, 45.0);
 
         LANCER_LEAP_HEIGHT = builder.comment("Height in blocks the Lancer leap reaches at its peak.")
                 .defineInRange("lancer_leap_height", 30.0, 1.0, 128.0);

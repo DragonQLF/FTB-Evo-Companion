@@ -12,18 +12,25 @@ import dev.ftb.mods.ftbevolutioncompanion.skills.SkillCooldowns;
 import dev.ftb.mods.ftbevolutioncompanion.skills.SkillsAbilities;
 import dev.ftb.mods.ftbevolutioncompanion.skills.SkillsHelper;
 import dev.ftb.mods.ftbevolutioncompanion.skills.SkillsRegistry;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityProcessor;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
@@ -33,11 +40,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -107,6 +116,12 @@ public final class CombatTicker {
             }
             if (SkillsHelper.isScythe(attacker.getMainHandItem())) {
                 reapingArc(attacker, target, state.lastScytheHitDamage);
+            }
+        } else if (SkillsHelper.isThrownProjectile(source.getDirectEntity())) {
+            resetUnarmed(state);
+            int bounces = (int) SkillsHelper.attr(attacker, SkillsRegistry.RICOCHET);
+            if (bounces > 0 && target.level() instanceof ServerLevel serverLevel) {
+                ricochet(serverLevel, attacker, source.getDirectEntity(), target, event.getInflictedDamage(), bounces);
             }
         } else if (source.getDirectEntity() instanceof AbstractArrow arrow) {
             resetUnarmed(state);
@@ -353,6 +368,18 @@ public final class CombatTicker {
     }
 
     public static void onProjectileImpact(ProjectileImpactEvent event) {
+        Projectile projectile = event.getProjectile();
+        if (projectile.hasData(SkillsRegistry.HOMING_STATE)
+                && projectile.getData(SkillsRegistry.HOMING_STATE).volleyCopy
+                && projectile.level() instanceof ServerLevel level) {
+            if (event.getRayTraceResult().getType() == HitResult.Type.ENTITY) {
+                level.getServer().schedule(new TickTask(level.getServer().getTickCount() + 1, projectile::discard));
+            } else {
+                event.setCanceled(true);
+                projectile.discard();
+            }
+            return;
+        }
         if (event.getProjectile() instanceof AbstractArrow arrow
                 && arrow.getOwner() instanceof ServerPlayer player
                 && event.getRayTraceResult().getType() == HitResult.Type.BLOCK) {
@@ -365,6 +392,18 @@ public final class CombatTicker {
     }
 
     public static void onEntityJoin(EntityJoinLevelEvent event) {
+        if (!event.getLevel().isClientSide()
+                && !event.loadedFromDisk()
+                && event.getEntity() instanceof Projectile projectile
+                && SkillsHelper.isThrownProjectile(projectile)) {
+            if (projectile.getOwner() instanceof ServerPlayer thrower
+                    && event.getLevel() instanceof ServerLevel level
+                    && !(projectile.hasData(SkillsRegistry.HOMING_STATE)
+                            && projectile.getData(SkillsRegistry.HOMING_STATE).skillSpawned)) {
+                applyThrownPerks(level, thrower, projectile);
+            }
+            return;
+        }
         if (event.getLevel().isClientSide()
                 || !(event.getEntity() instanceof AbstractArrow arrow)
                 || arrow instanceof ThrownTrident
@@ -382,6 +421,118 @@ public final class CombatTicker {
             if (target != null) {
                 arrow.getData(SkillsRegistry.HOMING_STATE).targetId = target.getUUID();
             }
+        }
+    }
+
+    private static void applyThrownPerks(ServerLevel level, ServerPlayer thrower, Projectile projectile) {
+        double velocity = SkillsHelper.attr(thrower, SkillsRegistry.THROWN_VELOCITY);
+        if (velocity > 0.0) {
+            projectile.setDeltaMovement(projectile.getDeltaMovement().scale(1.0 + velocity));
+            projectile.hurtMarked = true;
+        }
+        int runThrough = (int) SkillsHelper.attr(thrower, SkillsRegistry.RUN_THROUGH);
+        if (runThrough > 0 && projectile instanceof AbstractArrow arrow) {
+            ((AbstractArrowInvoker) arrow)
+                    .ftbevo$setPierceLevel((byte) Math.min(Byte.MAX_VALUE, arrow.getPierceLevel() + runThrough));
+        }
+        double volley = SkillsHelper.attr(thrower, SkillsRegistry.VOLLEY);
+        if (volley > 0.0 && thrower.getRandom().nextDouble() < volley) {
+            throwVolley(level, projectile);
+        }
+    }
+
+    private static void throwVolley(ServerLevel level, Projectile original) {
+        Vec3 motion = original.getDeltaMovement();
+        double speed = motion.length();
+        if (speed < 1.0E-4) {
+            return;
+        }
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, level.registryAccess());
+        original.saveWithoutId(output);
+        CompoundTag data = output.buildResult();
+        data.remove("UUID");
+        int extra = CompanionConfig.VOLLEY_EXTRA.get();
+        double spread = CompanionConfig.VOLLEY_SPREAD_DEGREES.get();
+        for (int i = 0; i < extra; i++) {
+            double angle = Math.toRadians(spread * (i / 2 + 1) * (i % 2 == 0 ? 1 : -1));
+            Entity loaded = EntityType.loadEntityRecursive(
+                    original.getType(), data.copy(), level, EntitySpawnReason.TRIGGERED, EntityProcessor.NOP);
+            if (!(loaded instanceof Projectile copy)) {
+                continue;
+            }
+            HomingState state = copy.getData(SkillsRegistry.HOMING_STATE);
+            state.skillSpawned = true;
+            state.volleyCopy = true;
+            if (copy instanceof AbstractArrow arrow) {
+                arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+            }
+            Vec3 direction = motion.yRot((float) angle);
+            copy.setPos(original.position());
+            copy.shoot(direction.x, direction.y, direction.z, (float) speed, 0.0F);
+            level.addFreshEntity(copy);
+        }
+        level.playSound(
+                null,
+                original.getX(),
+                original.getY(),
+                original.getZ(),
+                SoundEvents.TRIDENT_THROW.value(),
+                SoundSource.PLAYERS,
+                1.0F,
+                1.2F);
+    }
+
+    private static void ricochet(
+            ServerLevel level,
+            ServerPlayer attacker,
+            Entity projectile,
+            LivingEntity first,
+            float damage,
+            int bounces) {
+        float bounceDamage = (float) (damage * CompanionConfig.RICOCHET_DAMAGE_FRACTION.get());
+        if (bounceDamage <= 0.0F) {
+            return;
+        }
+        double radius = CompanionConfig.RICOCHET_RADIUS.get();
+        DamageSource source = level.damageSources().thrown(projectile, attacker);
+        Set<LivingEntity> hit = new HashSet<>();
+        hit.add(first);
+        LivingEntity from = first;
+        applyingSkillDamage = true;
+        try {
+            for (int i = 0; i < bounces; i++) {
+                LivingEntity origin = from;
+                LivingEntity next = null;
+                double best = radius * radius;
+                for (LivingEntity candidate : level.getEntitiesOfClass(
+                        LivingEntity.class,
+                        origin.getBoundingBox().inflate(radius),
+                        entity -> entity.isAlive()
+                                && !hit.contains(entity)
+                                && AllyCheck.isHostileTarget(attacker, entity))) {
+                    double distance = candidate.distanceToSqr(origin);
+                    if (distance < best) {
+                        best = distance;
+                        next = candidate;
+                    }
+                }
+                if (next == null) {
+                    break;
+                }
+                hit.add(next);
+                Vec3 start = origin.getBoundingBox().getCenter();
+                Vec3 end = next.getBoundingBox().getCenter();
+                Vec3 step = end.subtract(start).scale(0.125);
+                for (int p = 1; p <= 8; p++) {
+                    Vec3 point = start.add(step.scale(p));
+                    level.sendParticles(ParticleTypes.CRIT, point.x, point.y, point.z, 1, 0.0, 0.0, 0.0, 0.0);
+                }
+                hurtIgnoringCooldown(level, next, source, bounceDamage);
+                level.playSound(null, end.x, end.y, end.z, SoundEvents.TRIDENT_HIT, SoundSource.PLAYERS, 0.8F, 1.3F);
+                from = next;
+            }
+        } finally {
+            applyingSkillDamage = false;
         }
     }
 

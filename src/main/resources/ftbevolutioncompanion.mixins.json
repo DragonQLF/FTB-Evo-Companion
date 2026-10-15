@@ -168,7 +168,9 @@
     "compat.justdirethings.PocketGeneratorSelfInsertMixin",
     "compat.sorcery.ArsMagicConfigNotLoadedMixin",
     "compat.sorcery.ArsMagicDigBlockEntityDropMixin",
-    "compat.powerarmor.SolarModuleChargeAllPiecesMixin"
+    "compat.powerarmor.SolarModuleChargeAllPiecesMixin",
+    "compat.occultism.OccultismTakeItemMixin",
+    "compat.occultism.OccultismComparatorRoundTripMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",

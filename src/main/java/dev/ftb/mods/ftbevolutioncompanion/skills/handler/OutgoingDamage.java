@@ -2,9 +2,11 @@ package dev.ftb.mods.ftbevolutioncompanion.skills.handler;
 
 import dev.ftb.mods.ftbevolutioncompanion.config.CompanionConfig;
 import dev.ftb.mods.ftbevolutioncompanion.skills.CombatState;
+import dev.ftb.mods.ftbevolutioncompanion.skills.SkillCooldowns;
 import dev.ftb.mods.ftbevolutioncompanion.skills.SkillsAbilities;
 import dev.ftb.mods.ftbevolutioncompanion.skills.SkillsHelper;
 import dev.ftb.mods.ftbevolutioncompanion.skills.SkillsRegistry;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public final class OutgoingDamage {
@@ -116,6 +119,19 @@ public final class OutgoingDamage {
                     mult *= 1.0 + SkillsHelper.attr(attacker, SkillsRegistry.UNARMED_RAMP) * state.unarmedRampStacks;
                 }
             }
+        } else if (SkillsHelper.isThrownProjectile(source.getDirectEntity())) {
+            mult *= 1.0 + SkillsHelper.attr(attacker, SkillsRegistry.THROWN_DAMAGE);
+            double pin = SkillsHelper.attr(attacker, SkillsRegistry.THROWN_PIN);
+            if (pin > 0.0 && canReceiveDebuff(target) && attacker.getRandom().nextDouble() < pin) {
+                target.addEffect(
+                        new MobEffectInstance(SkillsRegistry.PINNED, CompanionConfig.PIN_DURATION_TICKS.get(), 0),
+                        attacker);
+            }
+            double doom = SkillsHelper.attr(attacker, SkillsRegistry.DOOM);
+            if (doom > 0.0 && SkillCooldowns.ready(attacker, SkillCooldowns.DOOM)) {
+                mult *= 1.0 + doom * (1.0 - SkillsHelper.healthFraction(target));
+                applyDoom(attacker, target);
+            }
         } else if (source.getDirectEntity() instanceof AbstractArrow arrow) {
             if (target.getHealth() >= target.getMaxHealth()) {
                 mult *= 1.0 + SkillsHelper.attr(attacker, SkillsRegistry.FIRST_STRIKE);
@@ -197,6 +213,24 @@ public final class OutgoingDamage {
                     1.2F);
         } else {
             target.invulnerableTime = invulnerableTime;
+        }
+    }
+
+    private static void applyDoom(ServerPlayer attacker, LivingEntity target) {
+        SkillCooldowns.start(attacker, SkillCooldowns.DOOM, CompanionConfig.DOOM_COOLDOWN.get());
+        if (canReceiveDebuff(target)) {
+            int ticks = CompanionConfig.DOOM_EFFECT_TICKS.get();
+            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, ticks, 0), attacker);
+            target.addEffect(
+                    new MobEffectInstance(MobEffects.SLOWNESS, ticks, CompanionConfig.DOOM_SLOWNESS_AMPLIFIER.get()),
+                    attacker);
+        }
+        if (target.level() instanceof ServerLevel level) {
+            Vec3 center = target.getBoundingBox().getCenter();
+            level.sendParticles(ParticleTypes.SCULK_SOUL, center.x, center.y, center.z, 20, 0.4, 0.6, 0.4, 0.05);
+            level.sendParticles(ParticleTypes.LARGE_SMOKE, center.x, center.y, center.z, 15, 0.4, 0.6, 0.4, 0.02);
+            level.playSound(
+                    null, center.x, center.y, center.z, SoundEvents.WITHER_SHOOT, SoundSource.PLAYERS, 0.8F, 0.6F);
         }
     }
 
