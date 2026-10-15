@@ -162,7 +162,10 @@
     "compat.agritech.PlanterExportMixin",
     "compat.agritech.AdvancedPlanterExportMixin",
     "compat.agritech.BiomassBurnerCompactedBlockMixin",
-    "compat.ironjetpacks.JetpackTierIngredientDisplayMixin"
+    "compat.ironjetpacks.JetpackTierIngredientDisplayMixin",
+    "compat.energymeter.MeterEnergyRecursionGuardMixin",
+    "compat.iceandfire.EggInIceUpdateTagMixin",
+    "compat.justdirethings.PocketGeneratorSelfInsertMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",
