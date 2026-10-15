@@ -58,6 +58,7 @@ public final class SkillsRegistry {
     public static final DeferredHolder<Attribute, Attribute> LIGHTNING_STRIKES = attr("lightning_strikes", 1.0);
     public static final DeferredHolder<Attribute, Attribute> BLOODLUST = attr("bloodlust", 100.0);
     public static final DeferredHolder<Attribute, Attribute> AXE_DURABILITY = attr("axe_durability", 20.0);
+    public static final DeferredHolder<Attribute, Attribute> AXE_PLUNDER = attr("axe_plunder", 20.0);
 
     public static final DeferredHolder<Attribute, Attribute> SHIELD_STUN = attr("shield_stun", 1.0);
     public static final DeferredHolder<Attribute, Attribute> SHIELD_RECOVERY = attr("shield_recovery", 1.0);

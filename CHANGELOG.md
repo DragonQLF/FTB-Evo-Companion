@@ -2,6 +2,14 @@
 
 ## [26.1.2.19]
 
+### Added
+
+- Plunder (`ftb:axe_plunder`) skill attribute: when you kill with an axe in your main hand, its Fortune adds twice its level as Looting, up to your Plunder
+
+### Changed
+
+- Incendium mob and entity functions are run from one pass over loaded entities each tick instead of the datapack clock's `@e` scans; the pack's clock falls back to the scans when the companion is not loaded
+
 ### Fixed
 
 - EvilCraft Spiked Plates generating blood from entities in the `ftbevolutioncompanion:spiked_plate_blacklist` entity tag, such as training dummies that never die
