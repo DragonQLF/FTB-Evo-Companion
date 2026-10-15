@@ -166,7 +166,9 @@
     "compat.energymeter.MeterEnergyRecursionGuardMixin",
     "compat.iceandfire.EggInIceUpdateTagMixin",
     "compat.justdirethings.PocketGeneratorSelfInsertMixin",
-    "compat.sorcery.ArsMagicConfigNotLoadedMixin"
+    "compat.sorcery.ArsMagicConfigNotLoadedMixin",
+    "compat.sorcery.ArsMagicDigBlockEntityDropMixin",
+    "compat.powerarmor.SolarModuleChargeAllPiecesMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",
