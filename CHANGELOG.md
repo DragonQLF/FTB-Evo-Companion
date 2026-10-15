@@ -12,6 +12,7 @@
 
 ### Fixed
 
+- Modular Drones made in the Drone Assembler disappearing on save or relog, from the inventory and from the drone slot; the assembler now creates the drone from the registered item, so it saves (FTBTeam/FTB-Modpack-Issues#13553)
 - EvilCraft Spiked Plates generating blood from entities in the `ftbevolutioncompanion:spiked_plate_blacklist` entity tag, such as training dummies that never die
 
 ## [26.1.2.18]
