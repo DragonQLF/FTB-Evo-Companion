@@ -161,7 +161,8 @@
     "compat.agritech.PlanterExportMixin",
     "compat.agritech.AdvancedPlanterExportMixin",
     "compat.agritech.BiomassBurnerCompactedBlockMixin",
-    "compat.ironjetpacks.JetpackTierIngredientDisplayMixin"
+    "compat.ironjetpacks.JetpackTierIngredientDisplayMixin",
+    "compat.witchery.VampireHuntDataMutableMapMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",
