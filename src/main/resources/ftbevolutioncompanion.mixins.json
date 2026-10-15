@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "dev.ftb.mods.ftbevolutioncompanion.mixin",
+  "plugin": "dev.ftb.mods.ftbevolutioncompanion.CompanionMixinPlugin",
   "compatibilityLevel": "JAVA_25",
   "refmap": "ftbevolutioncompanion.refmap.json",
   "mixins": [
@@ -162,7 +163,7 @@
     "compat.agritech.AdvancedPlanterExportMixin",
     "compat.agritech.BiomassBurnerCompactedBlockMixin",
     "compat.ironjetpacks.JetpackTierIngredientDisplayMixin",
-    "compat.witchery.VampireHuntDataMutableMapMixin"
+    "compat.kubejs.WorldLoaderRegistryContextMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",
@@ -198,8 +199,7 @@
     "compat.dynamicresources.client.ModernFixBakedRegistryHashMapMixin",
     "compat.dynamicresources.client.ModernFixBlockStateModelMapMixin",
     "compat.dynamicresources.client.FunctionalStorageFramedModelMixin",
-    "compat.dynamicresources.client.ColossalReactorsTurbineModelMixin",
-    "compat.buildingwand.client.PlannerWorldIdSanitizeMixin"
+    "compat.dynamicresources.client.ColossalReactorsTurbineModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
