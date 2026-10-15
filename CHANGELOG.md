@@ -23,6 +23,7 @@
 - Server crash loop when an edge case between Energy Meter and an EnderIO energy conduits
 - Players near an Ice and Fire ice dragon egg being disconnected when it freezes over
 - Temp JDT Fix for pocket gen
+- Client crash while joining a world when Ars Magica Legacy read its server config before it loaded
 - EvilCraft Spiked Plates generating blood from entities in the `ftbevolutioncompanion:spiked_plate_blacklist` entity tag, such as training dummies that never die
 
 ## [26.1.2.18]

@@ -165,7 +165,8 @@
     "compat.ironjetpacks.JetpackTierIngredientDisplayMixin",
     "compat.energymeter.MeterEnergyRecursionGuardMixin",
     "compat.iceandfire.EggInIceUpdateTagMixin",
-    "compat.justdirethings.PocketGeneratorSelfInsertMixin"
+    "compat.justdirethings.PocketGeneratorSelfInsertMixin",
+    "compat.sorcery.ArsMagicConfigNotLoadedMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",
