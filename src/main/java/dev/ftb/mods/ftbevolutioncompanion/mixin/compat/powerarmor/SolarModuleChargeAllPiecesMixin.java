@@ -20,6 +20,10 @@ public abstract class SolarModuleChargeAllPiecesMixin {
                                     "Lnet/minecraft/world/item/ItemStack;getCapability(Lnet/neoforged/neoforge/capabilities/ItemCapability;Ljava/lang/Object;)Ljava/lang/Object;"))
     private Object ftbevo$useEachPiecesOwnStack(
             ItemStack piece, ItemCapability<?, ?> capability, Object context, Operation<Object> original) {
+        // The ARMOR slot group includes BODY, which is always empty on players, and forStack throws on empty stacks.
+        if (piece.isEmpty()) {
+            return original.call(piece, capability, context);
+        }
         return original.call(piece, capability, ItemAccess.forStack(piece));
     }
 }
