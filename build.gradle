@@ -146,6 +146,7 @@ dependencies {
 	localRuntime "dev.ftb.mods:ftb-teams-neoforge:${ftb_teams_version}"
 	implementation "dev.ftb.mods:ftb-quests-neoforge:${ftb_quests_version}"
 	implementation "dev.ftb.mods:ftb-chunks-neoforge:${ftb_chunks_version}"
+	compileOnly "dev.ftb.mods:ftb-ultimine-neoforge:${ftb_ultimine_version}"
 	implementation "maven.modrinth:geckolib:${geckolib_modrinth_id}"
 	geckolibArtifact "maven.modrinth:geckolib:${geckolib_modrinth_id}"
 

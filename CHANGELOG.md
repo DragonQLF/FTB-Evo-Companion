@@ -1,5 +1,11 @@
 # Changelog
 
+## [26.1.2.20]
+
+### Fixed
+
+- Items and XP orbs disappearing everywhere on the server until a restart after an FTB Ultimine break failed partway; the break now always drops what it collected
+
 ## [26.1.2.19]
 
 ### Added

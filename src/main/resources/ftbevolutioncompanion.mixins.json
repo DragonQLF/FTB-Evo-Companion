@@ -170,7 +170,8 @@
     "compat.sorcery.ArsMagicDigBlockEntityDropMixin",
     "compat.powerarmor.SolarModuleChargeAllPiecesMixin",
     "compat.occultism.OccultismTakeItemMixin",
-    "compat.occultism.OccultismComparatorRoundTripMixin"
+    "compat.occultism.OccultismComparatorRoundTripMixin",
+    "compat.ultimine.UltimineReleaseDropsMixin"
   ],
   "client": [
     "compat.ltxi.LTXIJeiFluidSlotMixin",
